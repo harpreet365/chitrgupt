@@ -1,0 +1,31 @@
+BMS Bank - how to run (Windows)
+================================
+
+1. Install these once (free):
+     - Java 25 or newer  : https://adoptium.net
+     - Node.js 20 or newer: https://nodejs.org
+     - Python 3.11       : https://www.python.org/downloads/  (tick "Add python.exe to PATH")
+
+2. Unzip this folder to a SHORT path, for example  C:\bms
+   (very long paths can break the build on Windows)
+
+3. Double-click  RUN-ME.bat
+     - The first run builds everything and needs internet (about 3-5 minutes).
+     - At the end it prints the logins and opens http://localhost:5173
+
+4. Sign in, or click "Create an account" to register a new customer.
+     - Demo users: aarav.demo, priya.demo, employee.demo, teller.demo
+       Password : the DEMO_PASSWORD value in the .env file
+     - Admin    : admin / BOOTSTRAP_ADMIN_PASSWORD from .env (you must change it at first sign-in)
+
+5. To stop everything, double-click  STOP.bat
+
+Optional - "Continue with Google":
+   Create an OAuth client ID (Web application) at https://console.cloud.google.com/apis/credentials,
+   add http://localhost:5173 and http://localhost as Authorised JavaScript origins,
+   put it in .env as  GOOGLE_CLIENT_ID=...  then run STOP.bat and RUN-ME.bat again.
+
+Problems?
+   - "port in use": run STOP.bat, then RUN-ME.bat again.
+   - Backend not starting: open logs\backend.log
+   - This is an educational simulation. No real money is involved.

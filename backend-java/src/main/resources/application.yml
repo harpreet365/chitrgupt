@@ -1,0 +1,119 @@
+# All secrets come from environment variables (see ../.env.example). Nothing secret is defaulted here.
+spring:
+  application:
+    name: bms-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/bms}
+    username: ${DB_USERNAME:bms}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 20
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  session:
+    jdbc:
+      initialize-schema: never
+      cleanup-cron: "0 */5 * * * *"
+    timeout: ${SESSION_TIMEOUT:30m}
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      # Unknown JSON fields (e.g. "balance", "role") are rejected instead of silently ignored
+      fail-on-unknown-properties: true
+    default-property-inclusion: non_null
+  mvc:
+    problemdetails:
+      enabled: false
+
+server:
+  port: ${BACKEND_PORT:8080}
+  address: ${BACKEND_BIND_ADDRESS:127.0.0.1}
+  error:
+    include-message: never
+    include-stacktrace: never
+    whitelabel:
+      enabled: false
+  servlet:
+    session:
+      timeout: ${SESSION_TIMEOUT:30m}
+      cookie:
+        name: BMS_SESSION
+        http-only: true
+        secure: ${COOKIE_SECURE:false}
+        same-site: strict
+        path: /
+
+management:
+  server:
+    port: ${MANAGEMENT_PORT:8081}
+    address: 127.0.0.1
+  endpoints:
+    web:
+      exposure:
+        include: health,info,shutdown
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+    shutdown:
+      access: unrestricted
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5level [%thread] %logger{36} - %msg%n"
+  level:
+    root: INFO
+    com.bms: INFO
+    org.hibernate.SQL: WARN
+
+bms:
+  # external = use DB_URL (Docker Compose or an installed PostgreSQL)
+  # embedded = development only: the backend starts a real PostgreSQL server binary (zonky) on EMBEDDED_DB_PORT
+  db-mode: ${DB_MODE:external}
+  embedded-db:
+    port: ${EMBEDDED_DB_PORT:55432}
+    data-dir: ${EMBEDDED_DB_DATA_DIR:../data/postgres}
+  business-timezone: ${BUSINESS_TIMEZONE:Asia/Kolkata}
+  security:
+    max-failed-attempts: ${LOGIN_MAX_FAILED_ATTEMPTS:5}
+    lockout-duration: ${LOGIN_LOCKOUT_DURATION:15m}
+    internal-api-token: ${INTERNAL_API_TOKEN:}
+    cors-allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
+    rate-limit:
+      login-per-minute: ${RATE_LIMIT_LOGIN_PER_MINUTE:10}
+      money-per-minute: ${RATE_LIMIT_MONEY_PER_MINUTE:30}
+      api-per-minute: ${RATE_LIMIT_API_PER_MINUTE:600}
+  limits:
+    max-single-amount: ${LIMIT_MAX_SINGLE_AMOUNT:1000000.00}
+    customer-daily-outflow: ${LIMIT_CUSTOMER_DAILY_OUTFLOW:200000.00}
+  flagging:
+    large-amount-threshold: ${FLAG_LARGE_AMOUNT_THRESHOLD:100000.00}
+    rapid-outflow-count: ${FLAG_RAPID_OUTFLOW_COUNT:5}
+    rapid-outflow-window: ${FLAG_RAPID_OUTFLOW_WINDOW:10m}
+  analytics:
+    base-url: ${ANALYTICS_URL:http://127.0.0.1:8090}
+    service-token: ${ANALYTICS_SERVICE_TOKEN:}
+    timeout: ${ANALYTICS_TIMEOUT:10s}
+  bootstrap-admin:
+    username: ${BOOTSTRAP_ADMIN_USERNAME:}
+    email: ${BOOTSTRAP_ADMIN_EMAIL:}
+    password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+    must-change-password: ${BOOTSTRAP_ADMIN_MUST_CHANGE_PASSWORD:true}
+  signup:
+    # lets anyone create a customer login + savings account from the sign-in page
+    self-registration: ${SELF_REGISTRATION:true}
+    # OAuth client id from Google Cloud Console (type "Web application"); empty = Google sign-in hidden
+    google-client-id: ${GOOGLE_CLIENT_ID:}
+  demo:
+    seed: ${DEMO_SEED:false}
+    password: ${DEMO_PASSWORD:}

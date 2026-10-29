@@ -1,0 +1,5 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "python.terminal.useEnvFile": true,
+    "java.compile.nullAnalysis.mode": "automatic"
+}

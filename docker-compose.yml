@@ -1,0 +1,20 @@
+# Optional: PostgreSQL in Docker. Used when .env has DB_MODE=external and USE_DOCKER_DB=true.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: bms-postgres
+    environment:
+      POSTGRES_DB: bms
+      POSTGRES_USER: ${DB_USERNAME:-bms}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - bms-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-bms} -d bms"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+volumes:
+  bms-pgdata:

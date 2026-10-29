@@ -1,0 +1,10 @@
+.env
+.run/
+logs/
+data/
+backend-java/target/
+analytics-python/.venv/
+**/__pycache__/
+.pytest_cache/
+frontend/node_modules/
+frontend/dist/
